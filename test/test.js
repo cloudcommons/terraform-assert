@@ -136,7 +136,7 @@ describe("terraform-assert", () => {
             it("Can validate descriptions", () => {
                 var app = plan.configuration.variable("APP");
                 app.defaultIs("cloudcommons")
-                    .containsDescription()
+                    .hasDescription()
                     .descriptionIs("(Required) Application to which the resources belongs to");
             });
 

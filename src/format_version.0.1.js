@@ -378,7 +378,7 @@ module.exports = function (plan) {
                      * @param {*} description 
                      */
                     descriptionIs(description) {
-                        this.containsDescription();
+                        this.hasDescription();
                         assert.equal(variable.description, description, `Variable ${name} description expected was '${variable.description}'. Expected '${description}'`);
                         return this;
                     },
