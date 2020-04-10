@@ -1,5 +1,5 @@
 parameters:  
-  name: 'generator'
+  name: 'terraform-assert'
   workingDirectory: '$(System.DefaultWorkingDirectory)'
   maxParallel: 2
 
