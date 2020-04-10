@@ -1,0 +1,210 @@
+{
+    "format_version": "0.1",
+    "terraform_version": "0.12.23",
+    "variables": {
+        "APP": {
+            "value": "cloudcommons"
+        },
+        "CREATOR": {
+            "value": "cloudcommons"
+        },
+        "ENVIRONMENT": {
+            "value": "default"
+        },
+        "LOCATION": {
+            "value": "uksouth"
+        },
+        "RESOURCE_GROUP_NAME": {
+            "value": "cloudcommons-test"
+        }
+    },
+    "planned_values": {
+        "outputs": {
+            "RESOURCE_GROUP_ID": {
+                "sensitive": false
+            }
+        },
+        "root_module": {
+            "resources": [
+                {
+                    "address": "azurerm_resource_group.cloudcommons-test",
+                    "mode": "managed",
+                    "type": "azurerm_resource_group",
+                    "name": "cloudcommons-test",
+                    "provider_name": "azurerm",
+                    "schema_version": 0,
+                    "values": {
+                        "location": "uksouth",
+                        "timeouts": null
+                    }
+                },
+                {
+                    "address": "random_id.cloudcommons",
+                    "mode": "managed",
+                    "type": "random_id",
+                    "name": "cloudcommons",
+                    "provider_name": "random",
+                    "schema_version": 0,
+                    "values": {
+                        "byte_length": 4,
+                        "keepers": null,
+                        "prefix": null
+                    }
+                }
+            ]
+        }
+    },
+    "resource_changes": [
+        {
+            "address": "azurerm_resource_group.cloudcommons-test",
+            "mode": "managed",
+            "type": "azurerm_resource_group",
+            "name": "cloudcommons-test",
+            "provider_name": "azurerm",
+            "change": {
+                "actions": [
+                    "create"
+                ],
+                "before": null,
+                "after": {
+                    "location": "uksouth",
+                    "timeouts": null
+                },
+                "after_unknown": {
+                    "id": true,
+                    "name": true,
+                    "tags": true
+                }
+            }
+        },
+        {
+            "address": "random_id.cloudcommons",
+            "mode": "managed",
+            "type": "random_id",
+            "name": "cloudcommons",
+            "provider_name": "random",
+            "change": {
+                "actions": [
+                    "create"
+                ],
+                "before": null,
+                "after": {
+                    "byte_length": 4,
+                    "keepers": null,
+                    "prefix": null
+                },
+                "after_unknown": {
+                    "b64": true,
+                    "b64_std": true,
+                    "b64_url": true,
+                    "dec": true,
+                    "hex": true,
+                    "id": true
+                }
+            }
+        }
+    ],
+    "output_changes": {
+        "RESOURCE_GROUP_ID": {
+            "actions": [
+                "create"
+            ],
+            "before": null,
+            "after_unknown": true
+        }
+    },
+    "configuration": {
+        "provider_config": {
+            "azurerm": {
+                "name": "azurerm",
+                "version_constraint": "~\u003e 2.0",
+                "expressions": {
+                    "features": [
+                        {}
+                    ]
+                }
+            },
+            "random": {
+                "name": "random",
+                "version_constraint": "~\u003e 2.2"
+            }
+        },
+        "root_module": {
+            "outputs": {
+                "RESOURCE_GROUP_ID": {
+                    "expression": {
+                        "constant_value": "${azurerm_resource_group.cloudcommons-test.id}",
+                        "references": [
+                            "azurerm_resource_group.cloudcommons-test"
+                        ]
+                    },
+                    "description": "The resource group ID"
+                }
+            },
+            "resources": [
+                {
+                    "address": "azurerm_resource_group.cloudcommons-test",
+                    "mode": "managed",
+                    "type": "azurerm_resource_group",
+                    "name": "cloudcommons-test",
+                    "provider_config_key": "azurerm",
+                    "expressions": {
+                        "location": {
+                            "references": [
+                                "var.LOCATION"
+                            ]
+                        },
+                        "name": {
+                            "references": [
+                                "var.RESOURCE_GROUP_NAME",
+                                "var.ENVIRONMENT",
+                                "local.uid"
+                            ]
+                        },
+                        "tags": {
+                            "references": [
+                                "var.APP",
+                                "var.ENVIRONMENT",
+                                "local.uid"
+                            ]
+                        }
+                    },
+                    "schema_version": 0
+                },
+                {
+                    "address": "random_id.cloudcommons",
+                    "mode": "managed",
+                    "type": "random_id",
+                    "name": "cloudcommons",
+                    "provider_config_key": "random",
+                    "expressions": {
+                        "byte_length": {
+                            "constant_value": 4
+                        }
+                    },
+                    "schema_version": 0
+                }
+            ],
+            "variables": {
+                "APP": {
+                    "default": "cloudcommons",
+                    "description": "(Required) Application to which the resources belongs to"
+                },
+                "CREATOR": {
+                    "default": "cloudcommons",
+                    "description": "(Required) Creator of the resources"
+                },
+                "ENVIRONMENT": {
+                    "default": "default",
+                    "description": "(Required) Environment name. Used in most cloudcommon names. Short names without special characters are encouraged."
+                },
+                "LOCATION": {
+                    "description": " (Required) The location where the resource group should be created. For a list of all Azure locations, please consult this link or run az account list-locations --output table."
+                },
+                "RESOURCE_GROUP_NAME": {
+                    "description": "(Required) The name of the resource group. Must be unique on your Azure subscription."
+                }
+            }
+        }
+    }
+}

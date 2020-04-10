@@ -1,0 +1,33 @@
+{
+  "name": "terraform-assert",
+  "version": "0.1.0",
+  "description": "Terraform plan assert library",
+  "main": "src/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha --resursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cloudcommons/terraform-assert.git"
+  },
+  "keywords": [
+    "terraform",
+    "plan",
+    "assert"
+  ],
+  "author": "Sergio Sisternes (sesispla@outlook.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cloudcommons/terraform-assert/issues"
+  },
+  "homepage": "https://github.com/cloudcommons/terraform-assert#readme",
+  "devDependencies": {
+    "mocha": "^7.1.1"
+  },
+  "dependencies": {
+    "assert": "^2.0.0"
+  }
+}
