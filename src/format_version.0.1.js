@@ -13,7 +13,7 @@ module.exports = function (plan) {
          * @param {*} version 
          */
         terraformVersion: {
-            equals: function (version) {
+            is: function (version) {
                 assert.equal(plan.terraform_version, version, `Expected Terraform plan version to be ${version} but ${plan.terraform_version} found`);
             }
         },
@@ -98,7 +98,7 @@ module.exports = function (plan) {
                          * @param {*} mode 
                          */
                         modeIs(mode) {
-                            resourcePropertyEquals(address, resource.mode, mode, "mode");
+                            resourcePropertyIs(address, resource.mode, mode, "mode");
                             return this;
                         },
                         /**
@@ -106,7 +106,7 @@ module.exports = function (plan) {
                          * @param {*} name 
                          */
                         nameIs(name) {
-                            resourcePropertyEquals(address, resource.name, name, "name");
+                            resourcePropertyIs(address, resource.name, name, "name");
                             return this;
                         },
                         /**
@@ -114,7 +114,7 @@ module.exports = function (plan) {
                          * @param {*} type 
                          */
                         typeIs(type) {
-                            resourcePropertyEquals(address, resource.type, type, "mode");
+                            resourcePropertyIs(address, resource.type, type, "mode");
                             return this;
                         },
                         /**
@@ -122,7 +122,7 @@ module.exports = function (plan) {
                          * @param {*} provider 
                          */
                         providerNameIs(provider) {
-                            resourcePropertyEquals(address, resource.provider_name, provider, "provider");
+                            resourcePropertyIs(address, resource.provider_name, provider, "provider");
                             return this;
                         },
                         /**
@@ -130,7 +130,7 @@ module.exports = function (plan) {
                          * @param {*} schemaVersion 
                          */
                         schemaVersionIs(schemaVersion) {
-                            resourcePropertyEquals(address, resource.schema_version, schemaVersion, "schemaVersion");
+                            resourcePropertyIs(address, resource.schema_version, schemaVersion, "schemaVersion");
                             return this;
                         },
                         /**
@@ -174,7 +174,7 @@ module.exports = function (plan) {
                  * @param {*} value 
                  */
                 propertyIs(propertyName, value) {
-                    changePropertyEquals(address, value, resource[propertyName], propertyName);
+                    changePropertyIs(address, value, resource[propertyName], propertyName);
                     return this;
                 },
                 /**
@@ -346,7 +346,7 @@ module.exports = function (plan) {
                      * @param {*} value 
                      */
                     propertyIs(property, value) {
-                        providerPropertyEquals(provider, property, value);
+                        providerPropertyIs(provider, property, value);
                         return this;
                     },
                     /**
@@ -425,7 +425,7 @@ function getResource(plan, address) {
  * @param {*} actual Current value
  * @param {*} resourcePropertyName Resource property 
  */
-function resourcePropertyEquals(address, expected, actual, resourcePropertyName) {
+function resourcePropertyIs(address, expected, actual, resourcePropertyName) {
     assert.equal(actual, expected, `Expected resource ${address} ${resourcePropertyName} value was ${expected}. Actual: ${actual}`);
 }
 
@@ -435,7 +435,7 @@ function resourcePropertyEquals(address, expected, actual, resourcePropertyName)
  * @param {*} name 
  * @param {*} actual 
  */
-function providerPropertyEquals(provider, name, actual) {
+function providerPropertyIs(provider, name, actual) {
     expected = provider[name];
     assert.equal(provider[name], actual, `Expected provider ${provider.name} property ${name} value was ${expected}. Actual: ${actual}`);
 }
@@ -447,7 +447,7 @@ function providerPropertyEquals(provider, name, actual) {
  * @param {*} actual Current value
  * @param {*} resourcePropertyName Resource property 
  */
-function changePropertyEquals(address, expected, actual, resourcePropertyName) {
+function changePropertyIs(address, expected, actual, resourcePropertyName) {
     assert.equal(actual, expected, `Change ${address} ${resourcePropertyName} expected value was ${expected}. Actual: ${actual}`);
 }
 

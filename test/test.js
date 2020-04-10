@@ -6,7 +6,7 @@ const assert = require('assert');
 describe("terraform-assert", () => {
     describe("Basic tests", () => {
         it("Validates a terraform plan version", () => {
-            plan.terraformVersion.equals("0.12.23");
+            plan.terraformVersion.is("0.12.23");
         });
     });
 
