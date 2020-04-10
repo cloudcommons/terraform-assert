@@ -30,7 +30,7 @@ module.exports = function (plan) {
                  * Checks if the variable value is the same
                  * @param {*} value 
                  */
-                is: function (value) {                    
+                is: function (value) {
                     assert.equal(variable.value, value, `Expecting plan variable ${variable} to be ${value}. Actual: ${variable.value}`);
                     return this;
                 }
@@ -44,36 +44,28 @@ module.exports = function (plan) {
             /**
              * Outputs
              */
-            outputs: {
-                /**
-                 * Checks if the planned values outputs contains the given output name
-                 * @param {*} output 
-                 */
-                contains: function (output) {
-                    assert.ok(plan.planned_values, "The plan contains no planned values");
-                    assert.ok(plan.planned_values.outputs, "The plan contains no planned outputs");
-                    assert.ok(plan.planned_values.outputs[output] != undefined, `The plan contains no planned output named ${output}`);
-                    return this;
-                },
-                /**
-                 * Checks if the output is sensitive
-                 * @param {*} output 
-                 */
-                isSensitive: function (output) {
-                    assert.ok(plan.planned_values, "The plan contains no planned values");
-                    assert.ok(plan.planned_values.outputs, "The plan contains no planned outputs");
-                    assert.ok(plan.planned_values.outputs[output].sensitive === true, `Output ${output} should be sensitive`);
-                    return this;
-                },
-                /**
-                 * Checks if the output is not sensitive
-                 * @param {*} output 
-                 */
-                isNotSensitive: function (output) {
-                    assert.ok(plan.planned_values, "The plan contains no planned values");
-                    assert.ok(plan.planned_values.outputs, "The plan contains no planned outputs");
-                    assert.ok(plan.planned_values.outputs[output].sensitive === false, `Output ${output} should not be sensitive`);
-                    return this;
+            output(name) {
+                assert.ok(plan.planned_values, "The plan contains no planned values");
+                assert.ok(plan.planned_values.outputs, "The plan contains no planned outputs");
+                var output = plan.planned_values.outputs[name];
+                assert.ok(output != undefined, `The plan contains no planned output named ${name}`);
+                return {
+                    /**
+                     * Checks if the output is sensitive
+                     * @param {*} output 
+                     */
+                    isSensitive: function () {
+                        assert.ok(output.sensitive === true, `Output ${name} should be sensitive`);
+                        return this;
+                    },
+                    /**
+                     * Checks if the output is not sensitive
+                     * @param {*} output 
+                     */
+                    isNotSensitive: function () {
+                        assert.ok(output.sensitive === false, `Output ${name} should not be sensitive`);
+                        return this;
+                    }
                 }
             },
             /**

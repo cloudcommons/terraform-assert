@@ -50,11 +50,11 @@ describe("terraform-assert", () => {
     describe("Output tests", () => {
 
         it("Validates an existing output", () => {
-            plan.plannedValues.outputs.contains("RESOURCE_GROUP_ID");
+            plan.plannedValues.output("RESOURCE_GROUP_ID");
         });
 
         it("Validates an exising output sensitive kind", () => {
-            plan.plannedValues.outputs.isNotSensitive("RESOURCE_GROUP_ID");
+            plan.plannedValues.output("RESOURCE_GROUP_ID").isNotSensitive();
         });
 
         it("Throws when an output sensitive is not correct", () => {
