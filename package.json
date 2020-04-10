@@ -1,5 +1,5 @@
 {
-  "name": "terraform-assert",
+  "name": "@cloudcommons/terraform-assert",
   "version": "0.1.0",
   "description": "Terraform plan assert library",
   "main": "src/index.js",
