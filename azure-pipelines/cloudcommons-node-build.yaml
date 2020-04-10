@@ -1,0 +1,55 @@
+parameters:  
+  name: 'generator'
+  workingDirectory: '$(System.DefaultWorkingDirectory)'
+  maxParallel: 2
+
+jobs:
+- job: Build${{ parameters.name}}
+  strategy:
+    maxParallel: ${{ parameters.maxParallel }}
+    matrix:    
+      linux_node_12:
+        vmImage: 'ubuntu-latest'
+        nodeVersionSpec: '12.x'
+      mac_node_12:
+        vmImage: 'macos-latest'
+        nodeVersionSpec: '12.x'
+      windows_node_12:
+        vmImage: 'windows-latest'
+        nodeVersionSpec: '12.x'
+  displayName: 'Build - ${{ parameters.name}}'
+  pool:
+    vmImage: $(vmImage)
+
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '$(nodeVersionSpec)'
+    displayName: 'Node.js - Install'
+
+  - task: Npm@1
+    displayName: 'NPM - Install'
+    inputs:
+      command: 'install'
+
+  - task: Npm@1
+    displayName: 'NPM - Test'
+    inputs:
+      command: 'custom'
+      customCommand: 'test'
+
+  - task: PublishTestResults@2
+    displayName: 'NPM - Test - Publish results'
+    inputs:   
+      testResultsFormat: 'xUnit'
+      testResultsFiles: '**/test-*.xml'
+      searchFolder: '$(System.DefaultWorkingDirectory)/outputs'
+      testRunTitle: '$(vmImage) - Node $(nodeVersionSpec) - Terraform $(terraformVersion)'      
+      mergeTestResults: true
+      failTaskOnFailedTests: false
+      buildPlatform: $(vmImage)
+      buildConfiguration: 'Node $(nodeVersionSpec) - Terraform $(terraformVersion)'
+
+  - script: |
+      npm publish --dry-run
+    displayName: 'NPM - Publish (dry run)'

@@ -1,0 +1,30 @@
+parameters:
+  pool: 'ubuntu-latest'
+  name: 'generator'
+  nodeVersionSpec: '12.x'
+  workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+jobs:
+- job: Publish${{ parameters.name}}
+  displayName: 'Publish - ${{ parameters.name}}'
+  pool:
+    vmImage: ${{ parameters.pool }}
+
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '${{ parameters.nodeVersionSpec}}'
+    displayName: 'Node.js - Install'
+
+  - task: Npm@1
+    displayName: 'NPM - Install'  
+    inputs:
+      command: 'install'
+
+  - task: Npm@1
+    displayName: 'NPM - Publish'
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+    inputs:
+      command: 'custom'
+      customCommand: publish --access public
+      customEndpoint: 'npm-cloudcommons'
