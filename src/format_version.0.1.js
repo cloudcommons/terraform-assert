@@ -385,7 +385,7 @@ module.exports = function (plan) {
                     /**
                      * Checks if the variable contains a description
                      */
-                    containsDescription() {
+                    hasDescription() {
                         assert.ok(variable.description, `Variable ${name} doesn't contain any description`);
                         return this;
                     }
