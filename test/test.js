@@ -13,37 +13,36 @@ describe("terraform-assert", () => {
     describe("Variable tests", () => {
 
         it("Validates an existing terraform variable", () => {
-            plan.variables.contains("APP");
+            plan.variable("APP");
         });
 
         it("Validates a variable value", () => {
-            plan.variables.equals("APP", "cloudcommons");
+            plan.variable("APP").is("cloudcommons");
         });
 
         it("Is able to perform nested variable validations", () => {
-            plan.variables
-                .contains("APP").equals("APP", "cloudcommons")
-                .contains("CREATOR").equals("CREATOR", "cloudcommons")
-                .contains("ENVIRONMENT").equals("ENVIRONMENT", "default")
-                .contains("LOCATION").equals("LOCATION", "uksouth")
-                .contains("RESOURCE_GROUP_NAME").equals("RESOURCE_GROUP_NAME", "cloudcommons-test");
+            plan.variable("APP").is("cloudcommons");
+            plan.variable("CREATOR").is("cloudcommons");            
+            plan.variable("ENVIRONMENT").is("default");
+            plan.variable("LOCATION").is("uksouth")
+            plan.variable("RESOURCE_GROUP_NAME").is("cloudcommons-test");
         });
 
         it("Throws when a variable is not present", () => {
             assert.throws(() => {
-                plan.variables.contains("DONT_EXIST");
+                plan.variable("DONT_EXIST");
             });
         });
 
         it("Throws when a variable don't exist when equals", () => {
             assert.throws(() => {
-                plan.variables.equals("DONT_EXIST", "invalid_value")
+                plan.variable("DONT_EXIST").is("invalid_value");
             });
         });
 
         it("Throws when a variable value is not equal", () => {
             assert.throws(() => {
-                plan.variables.equals("APP", "invalid_value")
+                plan.variable("APP").is("invalid_value");
             });
         });
     });

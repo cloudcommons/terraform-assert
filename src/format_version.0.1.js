@@ -1,6 +1,12 @@
 const assert = require('assert');
 
+/**
+ * This functions returns an assert helper for the given terraform plan
+ * Support format_version 0.1
+ * For more information: https://www.terraform.io/docs/internals/json-format.html
+ */
 module.exports = function (plan) {
+    assert.equal(plan.format_version, "0.1", `Unsupported format version. Expected: 0.1. Actual: ${plan.format_version}`);
     return {
         /**
          * Checks if the terraform version is equal to the given version
@@ -12,21 +18,32 @@ module.exports = function (plan) {
             }
         },
 
-        variables: {
-            contains: function (variable) {
-                assert.ok(plan.variables, "The plan contains no variables");
-                assert.ok(plan.variables[variable] !== undefined, `Variable ${variable} is not present in the Terraform plan`);
-                return this;
-            },
-            equals: function (variable, value) {
-                var actual = plan.variables[variable];
-                assert.ok(actual !== undefined, `Variable ${variable} is not present in the Terraform plan`);
-                assert.equal(actual.value, value, `Expecting plan variable ${variable} to be ${value}. Actual: ${actual}`);
-                return this;
+        /**
+         * Gets a plan variable
+         */
+        variable(name) {
+            assert.ok(plan.variables, "The plan contains no variables");
+            var variable = plan.variables[name];
+            assert.ok(variable !== undefined, `Variable ${variable} is not present in the Terraform plan`);
+            return {
+                /**
+                 * Checks if the variable value is the same
+                 * @param {*} value 
+                 */
+                is: function (value) {                    
+                    assert.equal(variable.value, value, `Expecting plan variable ${variable} to be ${value}. Actual: ${variable.value}`);
+                    return this;
+                }
             }
         },
 
+        /**
+         * Planned values
+         */
         plannedValues: {
+            /**
+             * Outputs
+             */
             outputs: {
                 /**
                  * Checks if the planned values outputs contains the given output name
@@ -38,12 +55,20 @@ module.exports = function (plan) {
                     assert.ok(plan.planned_values.outputs[output] != undefined, `The plan contains no planned output named ${output}`);
                     return this;
                 },
+                /**
+                 * Checks if the output is sensitive
+                 * @param {*} output 
+                 */
                 isSensitive: function (output) {
                     assert.ok(plan.planned_values, "The plan contains no planned values");
                     assert.ok(plan.planned_values.outputs, "The plan contains no planned outputs");
                     assert.ok(plan.planned_values.outputs[output].sensitive === true, `Output ${output} should be sensitive`);
                     return this;
                 },
+                /**
+                 * Checks if the output is not sensitive
+                 * @param {*} output 
+                 */
                 isNotSensitive: function (output) {
                     assert.ok(plan.planned_values, "The plan contains no planned values");
                     assert.ok(plan.planned_values.outputs, "The plan contains no planned outputs");
@@ -51,34 +76,66 @@ module.exports = function (plan) {
                     return this;
                 }
             },
-
+            /**
+             * Planned resources
+             */
             resources: {
+                /**
+                 * Finds a resource by its address
+                 * @param {*} address 
+                 */
                 resource: function (address) {
                     var resource = getResource(plan, address);
                     return {
+                        /**
+                         * Returns the resource object. For advanced assertion
+                         */
                         get() {
                             return resource;
                         },
+                        /**
+                         * Checks if the resource mode is the same
+                         * @param {*} mode 
+                         */
                         modeIs(mode) {
                             resourcePropertyEquals(address, resource.mode, mode, "mode");
                             return this;
                         },
+                        /**
+                         * Checks if the resource name is the same
+                         * @param {*} name 
+                         */
                         nameIs(name) {
                             resourcePropertyEquals(address, resource.name, name, "name");
                             return this;
                         },
+                        /**
+                         * Checks if the resource type is the same
+                         * @param {*} type 
+                         */
                         typeIs(type) {
                             resourcePropertyEquals(address, resource.type, type, "mode");
                             return this;
                         },
+                        /**
+                         * Checks if the resource provider is the same
+                         * @param {*} provider 
+                         */
                         providerNameIs(provider) {
                             resourcePropertyEquals(address, resource.provider_name, provider, "provider");
                             return this;
                         },
+                        /**
+                         * Cheks if the resource schema version is the same
+                         * @param {*} schemaVersion 
+                         */
                         schemaVersionIs(schemaVersion) {
                             resourcePropertyEquals(address, resource.schema_version, schemaVersion, "schemaVersion");
                             return this;
                         },
+                        /**
+                         * Checks if the resource contains a value and is the same
+                         */
                         valueIs(key, value) {
                             var resourceValue = resource.values[key];
                             assert.ok(resourceValue !== undefined, `Resource ${address} don't contain a value named ${key}`);
@@ -101,115 +158,241 @@ module.exports = function (plan) {
                 },
             }
         },
+        /**
+         * Gets a resource change
+         * @param {*} address 
+         */
         resourceChange(address) {
             assert.ok(plan.resource_changes, "The plan contains no resource changes");
             var resource = plan.resource_changes.filter(c => c.address === address);
             assert.ok(resource.length === 1, `No change to resource ${address} found in plan`);
             resource = resource[0];
             return {
+                /**
+                 * Checks if a property value is the same
+                 * @param {*} propertyName 
+                 * @param {*} value 
+                 */
                 propertyIs(propertyName, value) {
                     changePropertyEquals(address, value, resource[propertyName], propertyName);
                     return this;
                 },
+                /**
+                 * Checks if the change mode is the same
+                 * @param {*} mode 
+                 */
                 modeIs(mode) {
                     return this.propertyIs("mode", mode);
                 },
+                /**
+                 * Checks if the change type is the same
+                 * @param {*} type 
+                 */
                 typeIs(type) {
                     return this.propertyIs("type", type);
                 },
+                /**
+                 * Checks if the change name is the same
+                 * @param {*} name 
+                 */
                 nameIs(name) {
                     return this.propertyIs("name", name);
                 },
+                /**
+                 * Checks if the provider is the same
+                 */
                 providerNameIs(provider) {
                     return this.propertyIs("provider_name", provider);
                 },
+                /**
+                 * Checks if the action array contains the given value
+                 * @param {*} action 
+                 */
                 actionIs(action) {
                     var actionIsPresent = resource.change.actions.some(a => a === action);
                     assert.ok(actionIsPresent, `Actions for resource ${address} are: ${resource.change.actions}. Expected to find: ${action}`);
                     return this;
                 },
+                /**
+                 * Returns an assert helper for the before property
+                 */
                 before: {
+                    /**
+                     * Returns the entire before object. For advanced assertion
+                     */
                     get() { return resource.change.before; },
+                    /**
+                     * Checks if a property in the before object is the same
+                     * @param {*} key property name in the before object
+                     * @param {*} value property value
+                     */
                     is(key, value) {
                         changeIs(resource, "before", key, value);
                         return this;
                     },
+                    /**
+                     * Checks if the before object is null
+                     */
                     isNull() {
                         assert.equal(resource.change.before, null);
                     }
                 },
+                /**
+                 * Returns and assert helper for the after property
+                 */
                 after: {
+                    /**
+                     * Returns the entire after object. For advanced assertion
+                     */
                     get() { return resource.change.after; },
+                    /**
+                     * Checks if a property in the after object is the same
+                     * @param {*} key 
+                     * @param {*} value 
+                     */
                     is(key, value) {
                         changeIs(resource, "after", key, value);
                         return this;
                     },
+                    /**
+                     * Checks if the after object is null
+                     */
                     isNull() {
                         assert.equal(resource.change.after, null);
                     }
                 },
+                /**
+                 * Returns and assert helper for the after_unknown property
+                 */
                 unknown: {
+                    /**
+                     * Returns the entire after_unknown object. For advanced assertion
+                     */
                     get() { return resource.change.after_unknown; },
+                    /**
+                     * Checks if a property in the after_unknown object is the same
+                     * @param {*} key 
+                     * @param {*} value Defaults to true
+                     */
                     is(key, value = true) {
                         changeIs(resource, "after_unknown", key, value);
                         return this;
                     },
+                    /**
+                     * Checks if the after_unknown object is null
+                     */
                     isNull() {
                         assert.equal(resource.change.after_unknown, null);
                     }
                 }
             }
         },
+        /**
+         * Returns the output_change assert helper
+         * @param {*} name 
+         */
         outputChange(name) {
             var change = plan.output_changes[name];
             assert.ok(change, `No output change named ${name} found`);
 
             return {
+                /**
+                 * Checks if the output change action contains the given action
+                 * @param {*} action 
+                 */
                 actionIs(action) {
                     var actionIsPresent = change.actions.some(a => a === action);
                     assert.ok(actionIsPresent, `Output ${name} actions are: ${change.actions}. Expected to find: ${action}`);
                     return this;
                 },
 
+                /**
+                 * Change before
+                 */
                 before: change.before,
+                /**
+                 * Change after
+                 */
                 after: change.after,
+                /**
+                 * Change after_unknown
+                 */
                 afterUnknown: change.after_unknown
             }
         },
 
+        /**
+         * Returns the configuration assert helper
+         */
         configuration: {
+            /**
+             * Returns the provider assert helper
+             * @param {*} name 
+             */
             provider(name) {
                 var provider = plan.configuration.provider_config[name];
                 assert.ok(provider);
                 return {
+                    /**
+                     * Returns a provider property 
+                     * @param {*} property 
+                     */
                     get(property) {
                         return provider[property];
                     },
+                    /**
+                     * Checks if a provider property is the same
+                     * @param {*} property 
+                     * @param {*} value 
+                     */
                     propertyIs(property, value) {
                         providerPropertyEquals(provider, property, value);
                         return this;
                     },
+                    /**
+                     * Checks if the provider name is the same
+                     * @param {*} name 
+                     */
                     nameIs(name) {
                         return this.propertyIs("name", name)
                     },
+                    /**
+                     * Checks if the provider version_constraint is the same
+                     * @param {*} version 
+                     */
                     versionConstraintIs(version) {
                         return this.propertyIs("version_constraint", version);
                     }
                 }
             },
+            /**
+             * Return the variable assert helper
+             * @param {*} name 
+             */
             variable(name) {
                 var variable = plan.configuration.root_module.variables[name];
                 assert.ok(variable, `The plan doesn't include any variable called ${name}`);
                 return {
+                    /**
+                     * Checks if the variable default is the same
+                     * @param {*} defaultValue 
+                     */
                     defaultIs(defaultValue) {
                         assert.equal(variable.default, defaultValue, `Configuration output ${name} default value was ${variable.default}. Expected: ${defaultValue}`);
                         return this;
                     },
+                    /**
+                     * Checks if the variable description is the same
+                     * @param {*} description 
+                     */
                     descriptionIs(description) {
                         this.containsDescription();
                         assert.equal(variable.description, description, `Variable ${name} description expected was '${variable.description}'. Expected '${description}'`);
                         return this;
                     },
+                    /**
+                     * Checks if the variable contains a description
+                     */
                     containsDescription() {
                         assert.ok(variable.description, `Variable ${name} doesn't contain any description`);
                         return this;
