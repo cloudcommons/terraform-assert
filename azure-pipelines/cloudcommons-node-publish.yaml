@@ -1,6 +1,6 @@
 parameters:
   pool: 'ubuntu-latest'
-  name: 'generator'
+  name: 'terraform-assert'
   nodeVersionSpec: '12.x'
   workingDirectory: '$(System.DefaultWorkingDirectory)'
 
