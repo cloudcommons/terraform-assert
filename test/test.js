@@ -113,8 +113,7 @@ describe('terraform-assert - Basic tests', () => {
 
     describe('Output changes', () => {
         it('Validates output changes', () => {
-            plan.output_changes.contains('RESOURCE_GROUP_ID')
-                .change('RESOURCE_GROUP_ID')
+            plan.output_changes('RESOURCE_GROUP_ID')
                 .actionIs('create')
                 .beforeIs(null)
                 .afterUnknownIs(true);
