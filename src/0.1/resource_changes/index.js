@@ -65,7 +65,7 @@ module.exports = function (resource_changes) {
                 var parent = this;
                 return {
                     is(provider) {
-                        return parent.provider("provider_name").is(provider);
+                        return parent.property("provider_name").is(provider);
                     }
                 }
             },

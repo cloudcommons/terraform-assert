@@ -101,6 +101,7 @@ describe('terraform-assert - Basic tests', () => {
             var change = plan.resource_changes('azurerm_resource_group.cloudcommons-test');
             change
                 .mode().is('managed')
+                .providerName().is('azurerm')
                 .action().is('create');
             change.before().isNull();
             change.after().is('location', 'uksouth');
