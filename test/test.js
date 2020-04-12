@@ -51,22 +51,22 @@ describe('terraform-assert - Basic tests', () => {
     describe('Output tests', () => {
 
         it('Validates an existing output', () => {
-            plan.planned_values.outputs.output('RESOURCE_GROUP_ID');
+            plan.planned_values.outputs('RESOURCE_GROUP_ID');
         });
 
         it('Validates an exising output sensitive kind', () => {
-            plan.planned_values.outputs.output('RESOURCE_GROUP_ID').isNotSensitive();
+            plan.planned_values.outputs('RESOURCE_GROUP_ID').isNotSensitive();
         });
 
         it('Throws when an output sensitive is not correct', () => {
             assertThrows(() => {
-                plan.planned_values.outputs.output('RESOURCE_GROUP_ID').isSensitive();
+                plan.planned_values.outputs('RESOURCE_GROUP_ID').isSensitive();
             });
         });
 
         it('Throws when an output is not present', () => {
             assertThrows(() => {
-                plan.planned_values.outputs.contains('DONT_EXIST');
+                plan.planned_values.outputs('DONT_EXIST');
             });
         });
     });
