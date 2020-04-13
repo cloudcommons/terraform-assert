@@ -1,6 +1,6 @@
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcloudcommons%2Fterraform-assert.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcloudcommons%2Fterraform-assert?ref=badge_shield)
-
 # Terraform Assert
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcloudcommons%2Fterraform-assert.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcloudcommons%2Fterraform-assert?ref=badge_shield)
+
 
 The aim of this assert library is to provide an easy way to assert terraform plans.
 
@@ -51,8 +51,5 @@ describe("My terraform plan test", () => {
 
 ```
 
-# License
-
-MIT License.
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcloudcommons%2Fterraform-assert.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcloudcommons%2Fterraform-assert?ref=badge_large)
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcloudcommons%2Fterraform-assert.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcloudcommons%2Fterraform-assert?ref=badge_large)
