@@ -51,6 +51,5 @@ describe("My terraform plan test", () => {
 
 ```
 
-
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcloudcommons%2Fterraform-assert.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcloudcommons%2Fterraform-assert?ref=badge_large)
